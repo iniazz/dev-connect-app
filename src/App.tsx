@@ -1,24 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import UserList from './components/UserList';
+import UserCreate from './components/UserCreate';
+import UserEdit from './components/UserEdit';
+import UserDeleteConfirmation from './components/UserDeleteConfirmation';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Routes>
+            {/* Route for the User List */}
+            <Route path="/" element={<UserList />} />
+
+            {/* Route for creating a new user */}
+            <Route path="/create" element={<UserCreate />} />
+
+            {/* Route for editing an existing user */}
+            <Route path="/edit/:id" element={<UserEdit />} />
+
+            {/* Route for user delete confirmation */}
+            <Route path="/delete/:id" element={<UserDeleteConfirmation onDeleteConfirmed={function (): void {
+            throw new Error('Function not implemented.');
+          } } onCancel={function (): void {
+            throw new Error('Function not implemented.');
+          } } />} />
+          </Routes>
+      </BrowserRouter>
     </div>
   );
 }
