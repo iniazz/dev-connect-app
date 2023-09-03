@@ -13,7 +13,7 @@ function UserCreate() {
 
   const handleSubmit = () => {
     axios
-      .post('/api/users', user)
+      .post('https://localhost:7249/api/User', user)
       .then((response) => {
         console.log(response.data);
         navigate('/');

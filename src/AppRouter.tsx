@@ -1,18 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import UserList from './components/UserList';
-import UserRegistration from './components/UserCreate';
-import UserUpdate from './components/UserEdit';
-import UserDeletion from './components/UserDeleteConfirmation';
+import UserCreate from './components/UserCreate';
+import UserEdit from './components/UserEdit';
+import UserDeleteConfirmation from './components/UserDeleteConfirmation';
 
 function AppRouter() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element  Component={UserList} />
-        <Route path="/register" Component={UserRegistration} />
-        <Route path="/update/:id" Component={UserUpdate} />
-        {/* <Route path="/delete/:id" Component={UserDeletion} /> */}
+        <Route path="/" element={<UserList />} />
+        <Route path="/create" element={<UserCreate />} />
+        <Route path="/edit/:id" element={<UserEdit />} />
+        {/* <Route path="/delete/:id" element={<UserDeleteConfirmation />} /> */}
       </Routes>
     </Router>
   );

@@ -29,11 +29,9 @@ const UserList: React.FC = () => {
 
   const handleConfirmDelete = () => {
     if (userIdToDelete !== null) {
-      // Send a DELETE request to your API to delete the user
       axios
         .delete(`https://localhost:7249/api/User/${userIdToDelete}`)
         .then(() => {
-          // Remove the deleted user from the list
           setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userIdToDelete));
           console.log('User deleted successfully.');
         })
@@ -41,7 +39,6 @@ const UserList: React.FC = () => {
           console.error('Error deleting user:', error);
         })
         .finally(() => {
-          // Reset state after deletion
           setUserIdToDelete(null);
           setShowDeleteConfirmation(false);
         });
@@ -51,6 +48,9 @@ const UserList: React.FC = () => {
   return (
     <div>
       <h1>User List</h1>
+      <Link to="/create" className="btn btn-success">
+        Create New User
+      </Link>
       <Table striped bordered hover>
         <thead>
           <tr>
