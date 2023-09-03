@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { apiService } from '../services/apiService';
 import ToastNotification from '../utils/ToastNotification';
 
-function UserCreate() {
-  const navigate = useNavigate();
+interface UserCreateProps {
+  onCreateUser: (newUser: any) => void;
+  onClose: () => void;
+}
+
+function UserCreate({ onCreateUser, onClose }: UserCreateProps) {
   const [user, setUser] = useState({ id: null, username: '', email: '', phoneNumber: '', skillsets: '', hobby: '' });
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -19,15 +22,10 @@ function UserCreate() {
     const { id, ...userWithoutId } = user;
     apiService.createUser(userWithoutId)
       .then((response) => {
-        setShowSuccessToast(true);
-        setShowErrorToast(false);
-        setTimeout( () => {
-          navigate('/');
-        }, 1000)
+        onCreateUser(response.data);
+        onClose();
       })
       .catch((error) => {
-        setShowSuccessToast(false);
-        setShowErrorToast(true);
       });
   };
   
@@ -35,60 +33,71 @@ function UserCreate() {
 
   return (
     <div>
-      <h2>Create User</h2>
+      <h2>User Informations</h2>
+      <br />
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="username">
-          <Form.Label>Username:</Form.Label>
+        <Form.Group className="mb-3" controlId="username">
+          <Form.Label>Username</Form.Label>
           <Form.Control
             type="text"
             name="username"
             value={user.username}
+            placeholder="johndoe"
             onChange={handleInputChange}
+            required
           />
         </Form.Group>
-        <Form.Group controlId="email">
-          <Form.Label>Email:</Form.Label>
+        <Form.Group className="mb-3" controlId="email">
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type="text"
             name="email"
             value={user.email}
+            placeholder="johndoe@gmail.com"
             onChange={handleInputChange}
+            required
           />
         </Form.Group>
-        <Form.Group controlId="phoneNumber">
-          <Form.Label>Phone Number:</Form.Label>
+        <Form.Group className="mb-3" controlId="phoneNumber">
+          <Form.Label>Phone Number</Form.Label>
           <Form.Control
-            type="text"
+            type="number"
             name="phoneNumber"
             value={user.phoneNumber}
+            placeholder="60123456789"
             onChange={handleInputChange}
+            required
           />
         </Form.Group>
-        <Form.Group controlId="skillsets">
-          <Form.Label>Skillsets:</Form.Label>
+        <Form.Group className="mb-3" controlId="skillsets">
+          <Form.Label>Skillsets</Form.Label>
           <Form.Control
             type="text"
             name="skillsets"
             value={user.skillsets}
+            placeholder="Javascripts, Phyton, etc"
             onChange={handleInputChange}
+            required
           />
         </Form.Group>
-        <Form.Group controlId="hobby">
-          <Form.Label>Hobby:</Form.Label>
+        <Form.Group className="mb-3" controlId="hobby">
+          <Form.Label>Hobby</Form.Label>
           <Form.Control
             type="text"
             name="hobby"
             value={user.hobby}
+            placeholder="Coding, read books, etc"
             onChange={handleInputChange}
+            required
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Create
-        </Button>
+        <br />
+        <div className="d-flex justify-content-end">
+          <Button variant="primary" size="sm" type="submit">
+            Register
+          </Button>
+        </div>
       </Form>
-      <Button variant="secondary" onClick={() => navigate('/')}>
-        Back to User List
-      </Button>
 
       {showSuccessToast && (
         <ToastNotification

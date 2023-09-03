@@ -30,10 +30,10 @@ function UserDeleteConfirmation({
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="danger" onClick={handleConfirmDelete}>
+        <Button variant="danger" size='sm' onClick={handleConfirmDelete}>
           Confirm
         </Button>
-        <Button variant="secondary" onClick={onCancel}>
+        <Button variant="secondary" size='sm' onClick={onCancel}>
           Cancel
         </Button>
       </Modal.Footer>

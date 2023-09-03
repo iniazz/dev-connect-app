@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { User } from '../user';
-import { Table, Button } from 'react-bootstrap';
+import { Table, Button, Card, Modal } from 'react-bootstrap';
 import UserDeleteConfirmation from './UserDeleteConfirmation';
 import { apiService } from '../services/apiService';
 import ToastNotification from '../utils/ToastNotification';
+import UserCreate from './UserCreate';
+import UserEdit from './UserEdit';
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
+  const [showCreateUserModal, setShowCreateUserModal] = useState<boolean>(false);
+  const [showUserEditModal, setShowUserEditModal] = useState<boolean>(false);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
@@ -28,6 +32,28 @@ const UserList: React.FC = () => {
         setToastMessage('Error fetching users: ' + error);
       });
   }, []);
+
+  const handleCreateUser = (newUser: User) => {
+    setUsers((prevUsers) => [...prevUsers, newUser]);
+    setShowToast(true);
+    setToastVariant('success');
+    setToastMessage('User created successfully');
+  };
+
+  const handleEditClick = (user: User) => {
+    setUserToEdit(user);
+    setShowUserEditModal(true);
+  };
+
+  const handleUpdateUser = (updatedUser: User) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
+    );
+    setShowToast(true);
+    setToastVariant('success');
+    setToastMessage('User updated successfully');
+    setShowUserEditModal(false);
+  };
 
   const handleDeleteClick = (userId: number) => {
     setUserIdToDelete(userId);
@@ -56,35 +82,86 @@ const UserList: React.FC = () => {
 
   return (
     <div>
-      <h1>User List</h1>
-      <Link to="/create" className="btn btn-success">
-        Create New User
-      </Link>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>
-                <Link to={`/edit/${user.id}`} className="btn btn-primary">
-                  Edit
-                </Link>
-                <Button variant="danger" onClick={() => handleDeleteClick(user.id)}>
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <Card>
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <h2>Developer Networking Platform</h2>
+          <Button variant="primary" size="sm" onClick={() => setShowCreateUserModal(true)}>
+            Add New User
+          </Button>
+        </Card.Header>
+        <Card.Body>
+          <Card.Title>Connecting Talent to Opportunities</Card.Title>
+          <br />
+          <Card.Text>
+          Welcome to the Freelancer Directory by CDN - Complete Developer Network. Connect with skilled freelancers, update your profile, and explore opportunities. <br />Collaborate effortlessly to make a brighter future together!
+          </Card.Text>
+          <br />
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Skillsets</th>
+                <th>Hobby</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phoneNumber}</td>
+                  <td>{user.skillsets}</td>
+                  <td>{user.hobby}</td>
+                  <td>
+                    <Button variant="secondary" size="sm" onClick={() => handleEditClick(user)}>
+                      Edit
+                    </Button>
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteClick(user.id)}>
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
+
+      {/* CREATE USER MODAL */}
+      <Modal show={showCreateUserModal} onHide={() => setShowCreateUserModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>New User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <UserCreate
+            onCreateUser={handleCreateUser}
+            onClose={() => setShowCreateUserModal(false)}
+          />
+        </Modal.Body>
+      </Modal>
+
+      {/* EDIT USER MODAL */}
+      <Modal show={showUserEditModal} onHide={() => setShowUserEditModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {userToEdit && (
+            <UserEdit
+              initialUser={userToEdit}
+              onUpdateUser={(updatedUser) => {
+                handleUpdateUser(updatedUser);
+                setShowUserEditModal(false);
+              }}
+              onClose={() => setShowUserEditModal(false)}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
+
 
       {showDeleteConfirmation && (
         <UserDeleteConfirmation

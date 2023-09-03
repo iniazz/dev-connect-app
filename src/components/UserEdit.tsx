@@ -1,44 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { apiService } from '../services/apiService';
 import ToastNotification from '../utils/ToastNotification';
+import { User } from '../user';
 
-function UserEdit() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+function UserEdit({
+  initialUser,
+  onUpdateUser,
+  onClose,
+}: {
+  initialUser: User;
+  onUpdateUser: (updatedUser: User) => void;
+  onClose: () => void;
+}) {
   const [user, setUser] = useState({ username: '', email: '', phoneNumber: '', skillsets: '', hobby: ''});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastSuccess, setToastSuccess] = useState(true);
 
   useEffect(() => {
-    apiService.getUsersById(Number(id))
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        setToastMessage('Error fetching user');
-        setToastSuccess(false);
-        setShowToast(true);
-      });
-  }, [id]);
+    setUser(initialUser);
+  }, [initialUser]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    apiService.updateUser(Number(id), user)
+    apiService
+      .updateUser(initialUser.id, user)
       .then((response) => {
         if (response.status === 204) {
           setToastMessage('User updated successfully');
           setToastSuccess(true);
           setShowToast(true);
-          setTimeout(() => {
-            navigate('/');
-          }, 1000)
+          onUpdateUser({ ...user, id: initialUser.id });
+          onClose();
         } else {
           setToastMessage('Update failed');
           setToastSuccess(false);
@@ -54,10 +52,11 @@ function UserEdit() {
 
   return (
     <div>
-      <h2>Edit User</h2>
+      <h2>User Informations</h2>
+      <br />
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="username">
-          <Form.Label>Username:</Form.Label>
+        <Form.Group className="mb-3" controlId="username">
+          <Form.Label>Username</Form.Label>
           <Form.Control
             type="text"
             name="username"
@@ -65,8 +64,8 @@ function UserEdit() {
             onChange={handleInputChange}
           />
         </Form.Group>
-        <Form.Group controlId="email">
-          <Form.Label>Email:</Form.Label>
+        <Form.Group className="mb-3" controlId="email">
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type="text"
             name="email"
@@ -74,17 +73,17 @@ function UserEdit() {
             onChange={handleInputChange}
           />
         </Form.Group>
-        <Form.Group controlId="phoneNumber">
-          <Form.Label>Phone Number:</Form.Label>
+        <Form.Group className="mb-3" controlId="phoneNumber">
+          <Form.Label>Phone Number</Form.Label>
           <Form.Control
-            type="text"
+            type="number"
             name="phoneNumber"
             value={user.phoneNumber}
             onChange={handleInputChange}
           />
         </Form.Group>
-        <Form.Group controlId="skillsets">
-          <Form.Label>Skillsets:</Form.Label>
+        <Form.Group className="mb-3" controlId="skillsets">
+          <Form.Label>Skillsets</Form.Label>
           <Form.Control
             type="text"
             name="skillsets"
@@ -92,8 +91,8 @@ function UserEdit() {
             onChange={handleInputChange}
           />
         </Form.Group>
-        <Form.Group controlId="hobby">
-          <Form.Label>Hobby:</Form.Label>
+        <Form.Group className="mb-3" controlId="hobby">
+          <Form.Label>Hobby</Form.Label>
           <Form.Control
             type="text"
             name="hobby"
@@ -101,13 +100,12 @@ function UserEdit() {
             onChange={handleInputChange}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Save Changes
-        </Button>
+        <div className="d-flex justify-content-end">
+          <Button variant="primary" size="sm" type="submit">
+            Save Changes
+          </Button>
+        </div>
       </Form>
-      <Button variant="secondary" onClick={() => navigate('/')}>
-        Back to User List
-      </Button>
 
       <ToastNotification
         show={showToast}
