@@ -4,20 +4,28 @@ import { User } from '../user';
 import { Table, Button } from 'react-bootstrap';
 import UserDeleteConfirmation from './UserDeleteConfirmation';
 import { apiService } from '../services/apiService';
+import ToastNotification from '../utils/ToastNotification';
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
+  const [toastMessage, setToastMessage] = useState<string>('');
 
   useEffect(() => {
     apiService.getUsers()
       .then((response) => {
-        console.log(response);
         setUsers(response.data);
+        setShowToast(true);
+        setToastVariant('success');
+        setToastMessage('Users fetched successfully');
       })
       .catch((error) => {
-        console.error('Error fetching users:', error);
+        setShowToast(true);
+        setToastVariant('danger');
+        setToastMessage('Error fetching users: ' + error);
       });
   }, []);
 
@@ -31,14 +39,17 @@ const UserList: React.FC = () => {
       apiService.deleteUser(userIdToDelete)
         .then(() => {
           setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userIdToDelete));
-          console.log('User deleted successfully.');
+          setToastVariant('success');
+          setToastMessage('User deleted successfully');
         })
         .catch((error) => {
-          console.error('Error deleting user:', error);
+          setToastVariant('danger');
+          setToastMessage('Error deleting user');
         })
         .finally(() => {
           setUserIdToDelete(null);
           setShowDeleteConfirmation(false);
+          setShowToast(true);
         });
     }
   };
@@ -82,6 +93,13 @@ const UserList: React.FC = () => {
           user={users.find((user) => user.id === userIdToDelete) || null}
         />
       )}
+
+      <ToastNotification
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        message={toastMessage}
+        success={toastVariant === 'success'}
+      />
     </div>
   );
 };

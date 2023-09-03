@@ -2,25 +2,36 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { apiService } from '../services/apiService';
+import ToastNotification from '../utils/ToastNotification';
 
 function UserCreate() {
   const navigate = useNavigate();
   const [user, setUser] = useState({ id: null, username: '', email: '', phoneNumber: '', skillsets: '', hobby: '' });
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    apiService.createUser(user)
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    const { id, ...userWithoutId } = user;
+    apiService.createUser(userWithoutId)
       .then((response) => {
-        console.log(response.data);
-        navigate('/');
+        setShowSuccessToast(true);
+        setShowErrorToast(false);
+        setTimeout( () => {
+          navigate('/');
+        }, 1000)
       })
       .catch((error) => {
-        console.error('Error:', error);
+        setShowSuccessToast(false);
+        setShowErrorToast(true);
       });
   };
+  
+  
 
   return (
     <div>
@@ -78,6 +89,23 @@ function UserCreate() {
       <Button variant="secondary" onClick={() => navigate('/')}>
         Back to User List
       </Button>
+
+      {showSuccessToast && (
+        <ToastNotification
+          show={showSuccessToast}
+          onClose={() => setShowSuccessToast(false)}
+          message="User created successfully"
+          success
+        />
+      )}
+      {showErrorToast && (
+        <ToastNotification
+          show={showErrorToast}
+          onClose={() => setShowErrorToast(false)}
+          message="Error creating user"
+          success={false}
+        />
+      )}
     </div>
   );
 }

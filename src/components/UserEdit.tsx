@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { apiService } from '../services/apiService';
+import ToastNotification from '../utils/ToastNotification';
 
 function UserEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: '', email: '', phoneNumber: '', skillsets: '', hobby: ''});
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSuccess, setToastSuccess] = useState(true);
 
   useEffect(() => {
     apiService.getUsersById(Number(id))
@@ -14,7 +18,9 @@ function UserEdit() {
         setUser(response.data);
       })
       .catch((error) => {
-        console.error('Error fetching user:', error);
+        setToastMessage('Error fetching user');
+        setToastSuccess(false);
+        setShowToast(true);
       });
   }, [id]);
 
@@ -22,18 +28,27 @@ function UserEdit() {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    apiService.updateUser(Number(id), user) // Convert id to number
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    apiService.updateUser(Number(id), user)
       .then((response) => {
-        console.log(response);
         if (response.status === 204) {
-          navigate('/');
+          setToastMessage('User updated successfully');
+          setToastSuccess(true);
+          setShowToast(true);
+          setTimeout(() => {
+            navigate('/');
+          }, 1000)
         } else {
-          console.error('Update failed:', response.data);
+          setToastMessage('Update failed');
+          setToastSuccess(false);
+          setShowToast(true);
         }
       })
       .catch((error) => {
-        console.error('Error:', error);
+        setToastMessage('Error updating user');
+        setToastSuccess(false);
+        setShowToast(true);
       });
   };
 
@@ -93,6 +108,13 @@ function UserEdit() {
       <Button variant="secondary" onClick={() => navigate('/')}>
         Back to User List
       </Button>
+
+      <ToastNotification
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        message={toastMessage}
+        success={toastSuccess}
+      />
     </div>
   );
 }
