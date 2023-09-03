@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Form, Button } from 'react-bootstrap';
+import { apiService } from '../services/apiService';
 
 function UserCreate() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ username: '', email: '', phoneNumber: '', skillsets: '', hobby: '' });
+  const [user, setUser] = useState({ id: null, username: '', email: '', phoneNumber: '', skillsets: '', hobby: '' });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
-    axios
-      .post('https://localhost:7249/api/User', user)
+    apiService.createUser(user)
       .then((response) => {
         console.log(response.data);
         navigate('/');

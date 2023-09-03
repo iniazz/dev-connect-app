@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { User } from '../user';
-import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
 import UserDeleteConfirmation from './UserDeleteConfirmation';
+import { apiService } from '../services/apiService';
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -11,8 +11,7 @@ const UserList: React.FC = () => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
 
   useEffect(() => {
-    axios
-      .get('https://localhost:7249/api/User')
+    apiService.getUsers()
       .then((response) => {
         console.log(response);
         setUsers(response.data);
@@ -29,8 +28,7 @@ const UserList: React.FC = () => {
 
   const handleConfirmDelete = () => {
     if (userIdToDelete !== null) {
-      axios
-        .delete(`https://localhost:7249/api/User/${userIdToDelete}`)
+      apiService.deleteUser(userIdToDelete)
         .then(() => {
           setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userIdToDelete));
           console.log('User deleted successfully.');

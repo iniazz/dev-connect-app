@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Form, Button, Modal } from 'react-bootstrap';
-import axios from 'axios';
+import { Form, Button } from 'react-bootstrap';
+import { apiService } from '../services/apiService';
 
 function UserEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [user, setUser] = useState({
-    username: '',
-    email: '',
-    phoneNumber: '',
-    skillsets: '',
-    hobby: '',
-  });
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [user, setUser] = useState({ username: '', email: '', phoneNumber: '', skillsets: '', hobby: ''});
 
   useEffect(() => {
-    axios.get(`https://localhost:7249/api/User/${id}`).then((response) => setUser(response.data));
+    apiService.getUsersById(Number(id))
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching user:', error);
+      });
   }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,10 +23,9 @@ function UserEdit() {
   };
 
   const handleSubmit = () => {
-    axios
-      .put(`https://localhost:7249/api/User/${id}`, user)
+    apiService.updateUser(Number(id), user) // Convert id to number
       .then((response) => {
-        console.log(response)
+        console.log(response);
         if (response.status === 204) {
           navigate('/');
         } else {
