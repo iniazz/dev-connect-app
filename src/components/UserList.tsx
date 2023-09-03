@@ -1,43 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-interface User {
-  id: number;
-  username: string;
-}
+import { User } from '../user';
+import axios from 'axios';
+import { Table, Button } from 'react-bootstrap';
+import UserDeleteConfirmation from './UserDeleteConfirmation';
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
 
   useEffect(() => {
-    // Fetch the list of users from your API here and update the users state.
-    // For this example, we'll use a dummy array.
-    const dummyUsers: User[] = [
-      { id: 1, username: 'User1' },
-      { id: 2, username: 'User2' },
-    ];
-    setUsers(dummyUsers);
+    axios
+      .get('https://localhost:7249/api/User')
+      .then((response) => {
+        console.log(response);
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+      });
   }, []);
 
   const handleDeleteClick = (userId: number) => {
-    // Remove the user from the users array.
-    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+    setUserIdToDelete(userId);
+    setShowDeleteConfirmation(true);
+  };
 
-    // You can also send a delete request to your API here.
+  const handleConfirmDelete = () => {
+    if (userIdToDelete !== null) {
+      // Send a DELETE request to your API to delete the user
+      axios
+        .delete(`https://localhost:7249/api/User/${userIdToDelete}`)
+        .then(() => {
+          // Remove the deleted user from the list
+          setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userIdToDelete));
+          console.log('User deleted successfully.');
+        })
+        .catch((error) => {
+          console.error('Error deleting user:', error);
+        })
+        .finally(() => {
+          // Reset state after deletion
+          setUserIdToDelete(null);
+          setShowDeleteConfirmation(false);
+        });
+    }
   };
 
   return (
     <div>
       <h1>User List</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.username}{' '}
-            <Link to={`/edit/${user.id}`}>Edit</Link>{' '}
-            <button onClick={() => handleDeleteClick(user.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>{user.username}</td>
+              <td>{user.email}</td>
+              <td>
+                <Link to={`/edit/${user.id}`} className="btn btn-primary">
+                  Edit
+                </Link>
+                <Button variant="danger" onClick={() => handleDeleteClick(user.id)}>
+                  Delete
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
+      {showDeleteConfirmation && (
+        <UserDeleteConfirmation
+          onDeleteConfirmed={handleConfirmDelete}
+          onCancel={() => setShowDeleteConfirmation(false)}
+          user={users.find((user) => user.id === userIdToDelete) || null}
+        />
+      )}
     </div>
   );
 };

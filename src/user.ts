@@ -1,4 +1,3 @@
-// user.ts
 export interface User {
     id: number;
     username: string;
@@ -6,5 +5,5 @@ export interface User {
     phoneNumber: string;
     skillsets: string;
     hobby: string;
-  }
+}
   

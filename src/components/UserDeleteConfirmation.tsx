@@ -1,35 +1,43 @@
-// UserDeleteConfirmation.tsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
+import { User } from '../user';
 
 interface UserDeleteConfirmationProps {
   onDeleteConfirmed: () => void;
   onCancel: () => void;
+  user: User | null;
 }
 
-function UserDeleteConfirmation({ onDeleteConfirmed, onCancel }: UserDeleteConfirmationProps) {
-  const navigate = useNavigate();
-
+function UserDeleteConfirmation({
+  onDeleteConfirmed,
+  onCancel,
+  user,
+}: UserDeleteConfirmationProps) {
   const handleConfirmDelete = () => {
-    // Send a DELETE request to your API to delete the user
-    // Example: axios.delete(`/api/users/${userId}`).then(() => onDeleteConfirmed());
+    onDeleteConfirmed();
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <h3>Confirm Deletion</h3>
-        <p>Are you sure you want to delete this user?</p>
-        <div className="modal-actions">
-          <button onClick={handleConfirmDelete} className="btn btn-danger">
-            Confirm
-          </button>
-          <button onClick={onCancel} className="btn btn-secondary">
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
+    <Modal show={true} onHide={onCancel}>
+      <Modal.Header closeButton>
+        <Modal.Title>Confirm Deletion</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {user && (
+          <p>
+            Are you sure you want to delete user <strong>{user.username}</strong>?
+          </p>
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="danger" onClick={handleConfirmDelete}>
+          Confirm
+        </Button>
+        <Button variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 

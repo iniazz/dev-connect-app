@@ -1,31 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Form, Button } from 'react-bootstrap';
 
 function UserCreate() {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ username: '', email: '', /* other fields */ });
+  const [user, setUser] = useState({ username: '', email: '', phoneNumber: '', skillsets: '', hobby: '' });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = () => {
-    // Send a POST request to your API to create a new user
-    // Example: axios.post('/api/users', user).then(() => history.push('/'));
-    const newUser = {
-      username: 'john',
-      email: 'john@gmail.com',
-      // other user properties...
-    };
-    
-    axios.post('/api/users', newUser)
+    axios
+      .post('/api/users', user)
       .then((response) => {
-        // Handle the response data here
         console.log(response.data);
+        navigate('/');
       })
       .catch((error) => {
-        // Handle any errors here
         console.error('Error:', error);
       });
   };
@@ -33,15 +26,59 @@ function UserCreate() {
   return (
     <div>
       <h2>Create User</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
-          <input type="text" name="username" value={user.username} onChange={handleInputChange} />
-        </div>
-        {/* Add input fields for other user attributes */}
-        <button type="submit">Create</button>
-      </form>
-      <button onClick={() => navigate('/')}>Back to User List</button>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="username">
+          <Form.Label>Username:</Form.Label>
+          <Form.Control
+            type="text"
+            name="username"
+            value={user.username}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+        <Form.Group controlId="email">
+          <Form.Label>Email:</Form.Label>
+          <Form.Control
+            type="text"
+            name="email"
+            value={user.email}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+        <Form.Group controlId="phoneNumber">
+          <Form.Label>Phone Number:</Form.Label>
+          <Form.Control
+            type="text"
+            name="phoneNumber"
+            value={user.phoneNumber}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+        <Form.Group controlId="skillsets">
+          <Form.Label>Skillsets:</Form.Label>
+          <Form.Control
+            type="text"
+            name="skillsets"
+            value={user.skillsets}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+        <Form.Group controlId="hobby">
+          <Form.Label>Hobby:</Form.Label>
+          <Form.Control
+            type="text"
+            name="hobby"
+            value={user.hobby}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Create
+        </Button>
+      </Form>
+      <Button variant="secondary" onClick={() => navigate('/')}>
+        Back to User List
+      </Button>
     </div>
   );
 }

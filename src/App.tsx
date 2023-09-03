@@ -10,21 +10,9 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-            {/* Route for the User List */}
             <Route path="/" element={<UserList />} />
-
-            {/* Route for creating a new user */}
             <Route path="/create" element={<UserCreate />} />
-
-            {/* Route for editing an existing user */}
             <Route path="/edit/:id" element={<UserEdit />} />
-
-            {/* Route for user delete confirmation */}
-            <Route path="/delete/:id" element={<UserDeleteConfirmation onDeleteConfirmed={function (): void {
-            throw new Error('Function not implemented.');
-          } } onCancel={function (): void {
-            throw new Error('Function not implemented.');
-          } } />} />
           </Routes>
       </BrowserRouter>
     </div>
