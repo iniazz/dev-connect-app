@@ -101,7 +101,7 @@ function UserEdit({
           />
         </Form.Group>
         <div className="d-flex justify-content-end">
-          <Button variant="primary" size="sm" type="submit">
+          <Button variant="warning" type="submit">
             Save Changes
           </Button>
         </div>

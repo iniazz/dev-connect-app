@@ -93,7 +93,7 @@ function UserCreate({ onCreateUser, onClose }: UserCreateProps) {
         </Form.Group>
         <br />
         <div className="d-flex justify-content-end">
-          <Button variant="primary" size="sm" type="submit">
+          <Button variant="warning" type="submit">
             Register
           </Button>
         </div>

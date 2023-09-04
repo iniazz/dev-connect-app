@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.card-header-custom {
+  background-color: #f4ae25;
+  padding: 15px 15px;
+}
+
+.card-body-custom,
+.modal-body-custom,
+.modal-footer-custom {
+  background-color: #e8e2d0;
+}

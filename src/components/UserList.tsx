@@ -6,6 +6,7 @@ import { apiService } from '../services/apiService';
 import ToastNotification from '../utils/ToastNotification';
 import UserCreate from './UserCreate';
 import UserEdit from './UserEdit';
+import '../App.css';
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -84,12 +85,12 @@ const UserList: React.FC = () => {
     <div>
       <Card>
         <Card.Header className="d-flex justify-content-between align-items-center">
-          <h2>Developer Networking Platform</h2>
-          <Button variant="primary" size="sm" onClick={() => setShowCreateUserModal(true)}>
+          <h2>DEVELOPER NETWORKING PLATFORM</h2>
+          <Button variant="warning" onClick={() => setShowCreateUserModal(true)}>
             Add New User
           </Button>
         </Card.Header>
-        <Card.Body>
+        <Card.Body className='card-body-custom'>
           <Card.Title>Connecting Talent to Opportunities</Card.Title>
           <br />
           <Card.Text>
@@ -135,7 +136,7 @@ const UserList: React.FC = () => {
         <Modal.Header closeButton>
           <Modal.Title>New User</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className='modal-body-custom'>
           <UserCreate
             onCreateUser={handleCreateUser}
             onClose={() => setShowCreateUserModal(false)}
@@ -148,7 +149,7 @@ const UserList: React.FC = () => {
         <Modal.Header closeButton>
           <Modal.Title>Edit User</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className='modal-body-custom'>
           {userToEdit && (
             <UserEdit
               initialUser={userToEdit}

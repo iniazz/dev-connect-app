@@ -22,7 +22,7 @@ function UserDeleteConfirmation({
       <Modal.Header closeButton>
         <Modal.Title>Confirm Deletion</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className='modal-body-custom'>
         {user && (
           <p>
             Are you sure you want to delete user <strong>{user.username}</strong>?
