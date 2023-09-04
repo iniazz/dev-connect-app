@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/dev-connect-app/static/css/main.6c3d2450.css",
+    "main.js": "/dev-connect-app/static/js/main.7b3bfe1b.js",
+    "static/js/787.a46dfbbf.chunk.js": "/dev-connect-app/static/js/787.a46dfbbf.chunk.js",
+    "static/media/body-bg.jpg": "/dev-connect-app/static/media/body-bg.f26adb92fb83f801a70b.jpg",
+    "index.html": "/dev-connect-app/index.html",
+    "main.6c3d2450.css.map": "/dev-connect-app/static/css/main.6c3d2450.css.map",
+    "main.7b3bfe1b.js.map": "/dev-connect-app/static/js/main.7b3bfe1b.js.map",
+    "787.a46dfbbf.chunk.js.map": "/dev-connect-app/static/js/787.a46dfbbf.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6c3d2450.css",
+    "static/js/main.7b3bfe1b.js"
+  ]
+}
